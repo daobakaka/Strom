@@ -1,0 +1,84 @@
+{
+    "kaka": "kaka",
+    "monsterConfig1": {
+        "damage": 0.1,
+        "monsterHealth": 40.0,
+        "healthCache": 40.0,
+        "monsterSpeed": 55.0,
+        "speedCache": 55.0
+    },
+    "monsterConfig2": {
+        "damage": 0.9,
+        "monsterHealth": 90.0,
+        "healthCache": 90.0,
+        "monsterSpeed": 80.0,
+        "speedCache": 80.0
+    },
+    "monsterConfig3": {
+        "damage": 1.1,
+        "monsterHealth": 350.0,
+        "healthCache": 350.0,
+        "monsterSpeed": 50.0,
+        "speedCache": 50.0
+    },
+    "monsterConfig4": {
+        "damage": 1.0,
+        "monsterHealth": 750.0,
+        "healthCache": 750.0,
+        "monsterSpeed": 65.0,
+        "speedCache": 65.0
+    },
+    "monsterConfig5": {
+        "damage": 1.20,
+        "monsterHealth": 1650.0,
+        "healthCache": 1650.0,
+        "monsterSpeed": 30.0,
+        "speedCache": 30.0,
+        "mechaAttackDis": 110000.0,
+        "bulletDamage": 2.0
+    },
+    "monsterConfig6": {
+        "damage": 1.8,
+        "monsterHealth": 3000.0,
+        "healthCache": 3000.0,
+        "monsterSpeed": 45.0,
+        "speedCache": 45.0,
+        "skillDamage": 25.0
+    },
+    "monsterConfig7": {
+        "damage": 2.1,
+        "monsterHealth": 3500.0,
+        "healthCache": 3500.0,
+        "monsterSpeed": 45.0,
+        "speedCache": 45.0,
+        "skillDamage": 60.0
+    },
+    "wildConfig1": {
+        "damage": 0.01,
+        "monsterHealth": 1500.0,
+        "healthCache": 1500.0,
+        "monsterSpeed": 30.0,
+        "speedCache": 30.0
+    },
+    "wildConfig2": {
+        "damage": 0.02,
+        "monsterHealth": 2000.0,
+        "healthCache": 2000.0,
+        "monsterSpeed": 30.0,
+        "speedCache": 30.0
+    },
+    "wildConfig3": {
+        "damage": 0.03,
+        "monsterHealth": 2500.0,
+        "healthCache": 2500.0,
+        "monsterSpeed": 40.0,
+        "speedCache": 40.0
+    },
+    "wildConfig4": {
+        "damage": 0.04,
+        "monsterHealth": 3000.0,
+        "healthCache": 3000.0,
+        "monsterSpeed": 40.0,
+        "speedCache": 40.0
+    }
+}
