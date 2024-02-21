@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
@@ -22,6 +23,7 @@ public class NoneMonoinstance<T> where T : new()
 
 
     }
+
 }
 
 public class Hostinfo : NoneMonoinstance<Hostinfo>

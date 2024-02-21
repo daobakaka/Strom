@@ -15,6 +15,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Timeline;
+using static Subscriber;
 using Random = UnityEngine.Random;
 
 
@@ -22,11 +23,12 @@ public class Monstermove : MonoBehaviour
 {
     // Start is called before the first frame update
     /// <summary>
-    /// »ùÓÚ×é¼þ£¬¾àÀë£¬Ä¿±êboss¡¢µÐÈË¡¢ÕóÓª
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬Ä¿ï¿½ï¿½bossï¿½ï¿½ï¿½ï¿½ï¿½Ë¡ï¿½ï¿½ï¿½Óª
     /// 
     /// </summary>
     [Header("BASE")]
     private Rigidbody rigidbody0;
+    private CapsuleCollider capsuleCollider0;
     private Animator animator0;
     public float movespeed;
     public float speedchache;
@@ -37,7 +39,7 @@ public class Monstermove : MonoBehaviour
     private bool ifuseskill;
 
     /// <summary>
-    /// »ðÁ¦±êÇ©¡¢×Óµ¯±êÇ©
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç©ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Ç©
     /// </summary>
     [Header("TAG")]
     public string enemyfire;
@@ -47,7 +49,7 @@ public class Monstermove : MonoBehaviour
     public string enemyTS;
     public string innerreduce;
     /// <summary>
-    /// ¹ÖÎïÉúÃü¼°¼¤»î»º´æ£¬bossÇøÓòÅÐ¶¨
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î»ºï¿½æ£¬bossï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
     /// </summary>
     [Header("HEALTH")]
     public float monsterhealth;
@@ -59,9 +61,9 @@ public class Monstermove : MonoBehaviour
     private GameObject mother;
     private GameObject vfx;
     public bool UIdeath;
-    //¹ÖÎï¼àÌý
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// <summary>
-    ///²âÊÔ¼àÌý²¿·Ö¿ÉÓÃ
+    ///ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¿ï¿½ï¿½ï¿½
     /// </summary>
     [Header("MONITOR")]
     private bool iflookat = true;
@@ -75,7 +77,8 @@ public class Monstermove : MonoBehaviour
     private bool realwildattack = true;
     private bool ifmove = true;
     public GameObject showtarget = null;
-    //¶¯»­¿ØÖÆ
+    private GameObject subscribBoss = null;
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     [Header("ANIMATION")]
     public bool iftwoattack;
     private float animatorpara;
@@ -83,7 +86,7 @@ public class Monstermove : MonoBehaviour
     private bool mecheaattack;
     public float mechabulletdis = 1000000;
     /// <summary>
-    /// ¹¥»÷ÍÏÎ²ÌØÐ§¿ØÖÆ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î²ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     [Header("TRAIL")]
     public float TrailPI = 0.5f;
@@ -287,7 +290,7 @@ public class Monstermove : MonoBehaviour
                     component7.appearPICache = component7.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 8://¼«µØ¹ê
+                case 8://ï¿½ï¿½ï¿½Ø¹ï¿½
                     monsterhealth = monsterConfig.wildConfig1.monsterHealth;
                     healthcache = monsterConfig.wildConfig1.healthCache;
                     damage = monsterConfig.wildConfig1.damage;
@@ -299,7 +302,7 @@ public class Monstermove : MonoBehaviour
                     component8.appearPICache = component8.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 9://¼Ä¾ÓÐ·
+                case 9://ï¿½Ä¾ï¿½Ð·
                     monsterhealth = monsterConfig.wildConfig2.monsterHealth;
                     healthcache = monsterConfig.wildConfig2.healthCache;
                     damage = monsterConfig.wildConfig2.damage;
@@ -311,7 +314,7 @@ public class Monstermove : MonoBehaviour
                     component9.appearPICache = component9.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 10://Ö©Öë
+                case 10://Ö©ï¿½ï¿½
                     monsterhealth = monsterConfig.wildConfig3.monsterHealth;
                     healthcache = monsterConfig.wildConfig3.healthCache;
                     damage = monsterConfig.wildConfig3.damage;
@@ -323,7 +326,7 @@ public class Monstermove : MonoBehaviour
                     component10.appearPICache = component10.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 11://±ùÔ­ÐÜ
+                case 11://ï¿½ï¿½Ô­ï¿½ï¿½
                     monsterhealth = monsterConfig.wildConfig4.monsterHealth;
                     healthcache = monsterConfig.wildConfig4.healthCache;
                     damage = monsterConfig.wildConfig4.damage;
@@ -435,7 +438,7 @@ public class Monstermove : MonoBehaviour
                     component7.appearPICache = component7.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 8://¼«µØ¹ê
+                case 8://ï¿½ï¿½ï¿½Ø¹ï¿½
                     monsterhealth = RemoteBulid.instance.monsterConfig.wildConfig1.monsterHealth;
                     healthcache = RemoteBulid.instance.monsterConfig.wildConfig1.healthCache;
                     damage = RemoteBulid.instance.monsterConfig.wildConfig1.damage;
@@ -447,7 +450,7 @@ public class Monstermove : MonoBehaviour
                     component8.appearPICache = component8.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 9://¼Ä¾ÓÐ·
+                case 9://ï¿½Ä¾ï¿½Ð·
                     monsterhealth = RemoteBulid.instance.monsterConfig.wildConfig2.monsterHealth;
                     healthcache = RemoteBulid.instance.monsterConfig.wildConfig2.healthCache;
                     damage = RemoteBulid.instance.monsterConfig.wildConfig2.damage;
@@ -459,7 +462,7 @@ public class Monstermove : MonoBehaviour
                     component9.appearPICache = component9.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 10://Ö©Öë
+                case 10://Ö©ï¿½ï¿½
                     monsterhealth = RemoteBulid.instance.monsterConfig.wildConfig3.monsterHealth;
                     healthcache = RemoteBulid.instance.monsterConfig.wildConfig3.healthCache;
                     damage = RemoteBulid.instance.monsterConfig.wildConfig3.damage;
@@ -471,7 +474,7 @@ public class Monstermove : MonoBehaviour
                     component10.appearPICache = component10.appearPI;
                     appearProbabilityCache = appearProbability;
                     break;
-                case 11://±ùÔ­ÐÜ
+                case 11://ï¿½ï¿½Ô­ï¿½ï¿½
                     monsterhealth = RemoteBulid.instance.monsterConfig.wildConfig4.monsterHealth;
                     healthcache = RemoteBulid.instance.monsterConfig.wildConfig4.healthCache;
                     damage = RemoteBulid.instance.monsterConfig.wildConfig4.damage;
@@ -536,10 +539,66 @@ public class Monstermove : MonoBehaviour
 
     }
     //-----------
+    IEnumerator IEChangeMyCollisonExculde()//the mecthod for change the collider;
+    {
+        yield return new WaitForSeconds(5);
+        WaitForSeconds loop = new WaitForSeconds(5);
+        for (; monsterhealth > 0;)
+        {
+            yield return loop;
+            if (Random.Range(0, 1f) > 0.1f)
+            {
+                GameObject[] objectsToExclude = GameObject.FindGameObjectsWithTag(mytag);
+
+                foreach (var obj in objectsToExclude)
+                {
+         
+                    Collider colliderToExclude = obj.GetComponent<Collider>();
+
+            
+                    Physics.IgnoreCollision(capsuleCollider0, colliderToExclude, true);
+                }
+                yield return loop;
+                foreach (var obj in objectsToExclude)
+                {
+        
+                    Collider colliderToExclude = obj.GetComponent<Collider>();
+
+                    Physics.IgnoreCollision(capsuleCollider0, colliderToExclude, false);
+                }
+
+            }
+        }
+    }
+    IEnumerator IEChangeMyLayer()//the method to change the layer of obj,to caculate collsion;
+    {
+        WaitForSeconds loop = new WaitForSeconds(5);
+        WaitForSeconds loopRecover= new WaitForSeconds(5);
+        for (; monsterhealth > 0;)
+        {
+            yield return loop;
+            {
+                if (Monsterins.ifCheackCollison == 1)
+                    if (Random.Range(0, 1f) > 0.7f)
+                    {
+                        gameObject.layer = LayerMask.NameToLayer("LayerMan");
+                        //Debug.Log("the layer has changed");
+                        yield return loopRecover;
+                        gameObject.layer = LayerMask.NameToLayer("Default");
+                    }
+                    else
+                    {if(gameObject.layer!=LayerMask.NameToLayer("Default"))
+                        gameObject.layer = LayerMask.NameToLayer("Default");
+                        yield return loopRecover;
+                    }
+            }
+        }
+    }
     void Start()
     {
         rigidbody0 = GetComponent<Rigidbody>();
         animator0 = GetComponent<Animator>();
+        capsuleCollider0 = GetComponent<CapsuleCollider>();
         //---choose the parent
         if (isICE)
             mother = GameObject.FindWithTag("MOTHER_AS");
@@ -547,9 +606,12 @@ public class Monstermove : MonoBehaviour
             mother = GameObject.FindWithTag("MOTHER");
 
         vfx = GameObject.FindWithTag("VFX");
+        subscribBoss = subscribBoss ?? GameObject.FindWithTag("ICE");
+       // Subscribe(Publisher.Getinstance());//the player of subscrib
+       // SubscribeBossMessage(subscribBoss.GetComponent<Rayboss>());
         //--choose the parent
         // Findenemy();
-       // Debug.Log("its has started monstermove");
+        // Debug.Log("its has started monstermove");
     }
     public void initMonsterData(Team team, string uid, MonsterType type)//****wjy code****
     {
@@ -608,6 +670,8 @@ public class Monstermove : MonoBehaviour
         //start coroutine  of that to adjust the vfx density
         StartCoroutine("IEStartToAdjustDensity");
         StartCoroutine("IECheckTheY");
+        // StartCoroutine("IEChangeMyCollisonExculde");
+        StartCoroutine("IEChangeMyLayer");
     }
 
     private void OnDisable()
@@ -627,6 +691,9 @@ public class Monstermove : MonoBehaviour
         StopCoroutine("IEreduce");
         ifdissovle = true;
         StopCoroutine("IECheckTheY");
+        StopCoroutine("IEChangeMyLayer");
+        gameObject.layer = LayerMask.NameToLayer("Default");
+        // StopCoroutine("IEChangeMyCollisonExculde");
         //if (ifdissovle)
         //    MonsterDeathBefore();
         //if (isdeath)
@@ -642,15 +709,25 @@ public class Monstermove : MonoBehaviour
         if (GameManager.instance.isGameFighting)
         {
             if (!ifWILD)
+            {
+                UnityEngine.Profiling.Profiler.BeginSample("MyMethod Realmove");
                 Realmove();
+                UnityEngine.Profiling.Profiler.EndSample();
+            }
             else
+            {
+                UnityEngine.Profiling.Profiler.BeginSample("MyMethod Wildmove");
                 WildMove();
+                UnityEngine.Profiling.Profiler.EndSample();
+            }
         }
         //---
         //camp skill monitoer
 
-       // StartDissolve(ifdissovle);
-
+        // StartDissolve(ifdissovle);
+        //UnityEngine.Profiling.Profiler.BeginSample("MyMethod Realmove");
+        //Realmove();
+        //UnityEngine.Profiling.Profiler.EndSample();
     }
     /// <summary>
     /// dissolve Coroutine;
@@ -817,7 +894,7 @@ public class Monstermove : MonoBehaviour
         }
 
     }
-    IEnumerator IEiffand()//¿ØÖÆµÐÈËÑ°ÕÒ
+    IEnumerator IEiffand()//ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½Ñ°ï¿½ï¿½
     {
         WaitForSeconds loop = new WaitForSeconds(0.3f);
         for (; monsterhealth > 0;)
@@ -828,7 +905,7 @@ public class Monstermove : MonoBehaviour
         }
 
     }
-    IEnumerator IEAnimatorPlay()//¿ØÖÆ¶¯»­²¥·Å
+    IEnumerator IEAnimatorPlay()//ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         WaitForSeconds loop = new WaitForSeconds(5);
         for (; monsterhealth > 0;)
@@ -841,7 +918,7 @@ public class Monstermove : MonoBehaviour
 
     }
     /// <summary>
-    /// ÒÔÉÏÔÝÊ±²»ÓÃ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void MonsterDeath()
     {
@@ -853,7 +930,7 @@ public class Monstermove : MonoBehaviour
        // Debug.Log("i call mechod here,  name" + gameObject.name);
     }
     /// <summary>
-    /// ½ÇÉ«¶¯»­ÊÂ¼þÖ´ÐÐËÀÍö
+    /// ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void MonsterDeathBefore()
     {
@@ -867,9 +944,8 @@ public class Monstermove : MonoBehaviour
         if (GameManager.instance.allMonster.Contains(this))
         {
             if (blood != null&& blood.gameObject.activeSelf&& blood.target==transform)
-            {              
-                blood.isShow = false;
-                blood.gameObject.SetActive(false);
+            {
+                blood.DestroyBlood();
             }
             GameManager.instance.allMonster.Remove(this);
             GameManager.instance.CheckShowName(0);
@@ -902,7 +978,7 @@ public class Monstermove : MonoBehaviour
                 attack.attackchache = skilldamage;
             }
             break;
-            // Debug.Log("¿ªÊ¼·¢Éä");
+            // Debug.Log("ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½");
         }
     }
     IEnumerator IEMecheaAttack()//control mechas attack f//now you can control TS
@@ -919,7 +995,7 @@ public class Monstermove : MonoBehaviour
                     if ((showtarget.transform.position - transform.position).sqrMagnitude < mechabulletdis)
                         mecheaattack = true;
                 }
-                // Debug.Log("OnAttack£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡");
+                // Debug.Log("OnAttackï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 
             }
             else
@@ -972,7 +1048,7 @@ public class Monstermove : MonoBehaviour
                 //  Debug.Log(this.gameObject.name);
             }
             break;
-            // Debug.Log("¿ªÊ¼·¢Éä");
+            // Debug.Log("ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½");
         }
     }
     public void AnimationEventMechea(int num)//the mecha recover walk after attack
@@ -985,7 +1061,7 @@ public class Monstermove : MonoBehaviour
             case 2:
                 mecheaattack = false;
                 animator0.SetBool("walking", true);
-                // Debug.Log("Over Attack£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡");
+                // Debug.Log("Over Attackï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
                 break;
         }
     }
@@ -999,7 +1075,7 @@ public class Monstermove : MonoBehaviour
             case 2:
                 mecheaattack = false;
                 animator0.SetBool("walking", true);
-                // Debug.Log("Over Attack£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡£¡");
+                // Debug.Log("Over Attackï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
                 break;
         }
     }
@@ -1302,9 +1378,6 @@ public class Monstermove : MonoBehaviour
             GameObject target = null;
             if (GameObject.FindWithTag(enemytag) != null)
             {
-
-
-
                 if (iflookat)
                 { GameObject[] targets = GameObject.FindGameObjectsWithTag(enemytag);
                     min = (targets[0].transform.position - gameObject.transform.position).sqrMagnitude;
@@ -1518,7 +1591,7 @@ public class Monstermove : MonoBehaviour
             }
         }
     }
-    public void Reducehealth(int num)//¶¯»­ÊÂ¼þ£¬ÔÝÊ±²»ÓÃ
+    public void Reducehealth(int num)//ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     {
         switch (num)
         {
@@ -1584,7 +1657,7 @@ public class Monstermove : MonoBehaviour
                     }
                     //#endif
                 }
-                // Debug.Log("ÊÜÉËÁË");
+                // Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
                 if (ifunderattack && Random.Range(0, 1f) < appearProbability)//its the judge of that if the monster has an effect of undering attack;
                     Netpool.Getinstance().Insgameobj(underattackVFX, transform.position + directOffset + new Vector3(Random.Range(-1, 1f) * underattackVFXOffset.x, Random.Range(-1, 1f) * underattackVFXOffset.y + Random.Range(-1, 1f) * underattackVFXOffset.y),
                         Quaternion.Euler(underattackVFXRotate.x, underattackVFXRotate.y, underattackVFXRotate.z), vfx.transform, underattackScale);
@@ -1694,7 +1767,7 @@ public class Monstermove : MonoBehaviour
 
         }
 
-        // Debug.Log("Åö×²ÁË");
+        // Debug.Log("ï¿½ï¿½×²ï¿½ï¿½");
     }
     private void OnTriggerExit(Collider other)//lock the damage of hrut
 
@@ -2177,7 +2250,7 @@ public class Monstermove : MonoBehaviour
 
                 }
                 break;
-            case 8://¼«µØ¹ê
+            case 8://ï¿½ï¿½ï¿½Ø¹ï¿½
                 if (Monsterins.instance.objnumcache <= 50)
                 {
                     appearProbability = appearProbabilityCache;
@@ -2221,7 +2294,7 @@ public class Monstermove : MonoBehaviour
 
                 }
                 break;
-            case 9://¼Ä¾ÓÐ·
+            case 9://ï¿½Ä¾ï¿½Ð·
                 if (Monsterins.instance.objnumcache <= 50)
                 {
                     appearProbability = appearProbabilityCache;
@@ -2265,7 +2338,7 @@ public class Monstermove : MonoBehaviour
 
                 }
                 break;
-            case 10://Ö©Öë
+            case 10://Ö©ï¿½ï¿½
                 if (Monsterins.instance.objnumcache <= 50)
                 {
                     appearProbability = appearProbabilityCache;
@@ -2309,7 +2382,7 @@ public class Monstermove : MonoBehaviour
 
                 }
                 break;
-            case 11://±ùÔ­ÐÜ
+            case 11://ï¿½ï¿½Ô­ï¿½ï¿½
                 if (Monsterins.instance.objnumcache <= 50)
                 {
                     appearProbability = appearProbabilityCache;
@@ -2425,6 +2498,35 @@ public class Monstermove : MonoBehaviour
         
         }
     }
+    /// <summary>
+    ///module of Observer mode
+    /// </summary>
+    /// <param name="num"></param>
+    /// 
+    private void Subscribe(Publisher publisher)
+    {
+        //var handel = Publisher.Getinstance().GetPublisherEvent();
+        //handel += OnMyEventHappen;
+        publisher.EmyEvent += OnMyEventHappen;
+        //Debug.Log("has subscribe");
+    }
 
+    private void OnMyEventHappen(object sender, EventArgs e)
+    {
+        Debug.Log("Event has been triggered.");
+    }
+
+    private void SubscribeBossMessage(Rayboss rayboss)
+    {
+        rayboss.EMyEvent += OnBossEventHappen;
+    }
+    private void OnBossEventHappen(object sender, MyCustomEventArgs e)
+    {
+
+        Debug.Log(e.Message);
+    
+    }
+        
+    
 }
 

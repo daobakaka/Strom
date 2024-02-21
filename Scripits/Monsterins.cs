@@ -1,12 +1,14 @@
 using Games.Characters.EliteUnits;
 using Games.Characters.SDKLayer;
 using Games.Characters.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities.UniversalDelegates;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class Monsterins : MonoBehaviour
@@ -46,7 +48,19 @@ public class Monsterins : MonoBehaviour
     public int objnum_assist;
     public int objnumcache;
     public int testnum;
-   // public static int deathnum;
+    // public static int deathnum;
+    public int excutetime;
+    /// <summary>
+    /// protect time for world
+    /// </summary>
+    private float iceHPcache, fireHPcache;
+    /// <summary>
+    /// the module of subscribe
+    /// </summary>
+    public Action<String> AActionForBoss;
+    public EventHandler EEventHandler;
+    public static int ifCheackCollison;
+    private bool ifcheck = false;
     void Start()
     {
 
@@ -64,9 +78,11 @@ public class Monsterins : MonoBehaviour
         StartCoroutine("IEICEBossReduceDamage");//start the coroitine of boss emit golden light,the boss has 90% off damage;
         //---
         StartCoroutine("IEFIREBossReduceDamage");//start the coroitine of boss emit golden light,the boss has 90% off damage;
-        SkillParIns();//give the skill par ins
+      //  SkillParIns();//give the skill par ins
         //---
         StartCoroutine("IECaculateObjCount");//start the IEcoroutine
+        ActionModule();
+        AActionForBoss("it is an Aciton for boss");
     }
 
     public void StartGameForWorld()
@@ -86,16 +102,39 @@ public class Monsterins : MonoBehaviour
         StartCoroutine("IEICEBossReduceDamage");//start the coroitine of boss emit golden light,the boss has 90% off damage;
         //---
         StartCoroutine("IEFIREBossReduceDamage");//start the coroitine of boss emit golden light,the boss has 90% off damage;
-        SkillParIns();//give the skill par ins
         //---
         StartCoroutine("IECaculateObjCount");//start the IEcoroutine
-
+        //
+        StartCoroutine("IECacheBossHp");
+        //
+        StartCoroutine("IEIfcheck");
 
     }
+    private void ActionForBoss(string word)
+    {
+
+        Debug.Log(word);
+    
+    
+    }
+    private void ActionModule()
+    {
+        AActionForBoss = ActionForBoss;
+    
+    }
+    IEnumerator IECacheBossHp()
+    {
+        yield return new WaitForSeconds(6);
+
+        iceHPcache = Rayboss.ICEbossHP;
+        fireHPcache = Rayboss.ICEbossHP;
+        Debug.Log($"-----------ice={iceHPcache}and the rayboss={Rayboss.ICEbossHP}---fire={fireHPcache}and the rayboss={Rayboss.FIREbossHP}---------------");
+
+    }    
 
     private void OnEnable()
     {
-        SkillParIns();
+       // SkillParIns();
     }
     // Update is called once per frame
     void Update()
@@ -281,6 +320,26 @@ public class Monsterins : MonoBehaviour
         //{
         //    Debug.Log(Netpool.Getinstance().monsterStruct["kaka0"].monsterIntegral);
         //}
+
+        if (Input.GetKey(KeyCode.F4))//&&Input.GetKey(KeyCode.B))
+        {
+            if (Input.GetKeyDown(KeyCode.O))
+            {
+                if (ifclone)
+                    PublisherTest();
+                ifcheck = false;
+            }
+        }
+        if (Input.GetKey(KeyCode.F4))//&&Input.GetKey(KeyCode.B))
+        {
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                if (ifclone)
+                    ifCheackCollison *= -1;
+                ifcheck = false;
+                Debug.Log($"has start to checkcollison,and the checking is:    {ifCheackCollison}");
+            }
+        }
     }
     IEnumerator IESpawnerPosition()
     {
@@ -401,7 +460,7 @@ public class Monsterins : MonoBehaviour
             //  ifclone = false;
 
         }
-        yield return new WaitForSeconds(0);
+        yield return null;
         ifclone = true;
         //spwanpoint[Random.Range(0, spwanpoint.Length)
     }
@@ -495,7 +554,13 @@ public class Monsterins : MonoBehaviour
     {
         StartCoroutine(_WaitCallMonsters(team, type, count, uid));
     }
+    public void StopWaitCallMonster(Team team, MonsterType type, int count, string uid = "1")
+    {
 
+        StopCoroutine(_WaitCallMonsters(team, type, count, uid));
+
+
+    }
     public void initConfigValue()
     {
         string str = HttpRquest.instance.get_global_config_value(100028);
@@ -508,18 +573,27 @@ public class Monsterins : MonoBehaviour
     private int callCount = 5;
     private IEnumerator _WaitCallMonsters(Team team, MonsterType type, int count, string uid = "1")
     {
-
+        WaitForSeconds loop = new WaitForSeconds(0.5f*Time.deltaTime);
         int currentCount = 0;
         while (currentCount != count)
         {
-            for (int j = 0; j < callCount; j++)
+            if (Rayboss.FIREbossHP > 0 && Rayboss.ICEbossHP > 0)
+                for (int j = 0; j < callCount; j++)
+                {
+                    if (currentCount >= count)
+                        break;
+                    currentCount++;
+                    CallMonsters(team, type, uid);
+                    yield return loop;
+                    //Debug.Log("call troops in queue");
+                }
+            else
             {
-                if (currentCount >= count)
-                    break;
-                currentCount++;
-                CallMonsters(team, type, uid);
+                Debug.Log("quit the game");
+                ClearAll();
+                break;
+                
             }
-            yield return new WaitForEndOfFrame();//改为间隔每帧
         }
     }
 
@@ -570,7 +644,7 @@ public class Monsterins : MonoBehaviour
 
                         if (Netpool.Getinstance().monsterStruct.ContainsKey(uid))
                         {
-                            if (Netpool.Getinstance().monsterStruct[uid].num < 2)
+                            if (Netpool.Getinstance().monsterStruct[uid].num <2)
                                 target = Netpool.Getinstance().Insgameobj(monsterunilt[6], new Vector3(-226 + spawnerPosionRandom, 5, 225 + spawnerPosionRandom), Quaternion.identity, mother, uid, MonsterType.PUNISHER);
                             else
                                 target = Netpool.Getinstance().Insgameobj(monsterunilt[12], new Vector3(-226 + spawnerPosionRandom, 5, 225 + spawnerPosionRandom), Quaternion.identity, mother, uid, MonsterType.PUNISHER);
@@ -582,7 +656,7 @@ public class Monsterins : MonoBehaviour
                     {
                         if (Netpool.Getinstance().monsterStruct.ContainsKey(uid))
                         {
-                            if (Netpool.Getinstance().monsterStruct[uid].num < 2)
+                            if (Netpool.Getinstance().monsterStruct[uid].num <2)
                                 target = Netpool.Getinstance().Insgameobj(monsterunilt[7], new Vector3(226 + spawnerPosionRandom, 5, -315 + spawnerPosionRandom), Quaternion.identity, mother, uid, MonsterType.PUNISHER);
                             else
                                 target = Netpool.Getinstance().Insgameobj(monsterunilt[13], new Vector3(226 + spawnerPosionRandom, 5, -315 + spawnerPosionRandom), Quaternion.identity, mother, uid, MonsterType.PUNISHER);
@@ -650,17 +724,21 @@ public class Monsterins : MonoBehaviour
     {
         Netpool.Getinstance().Clearpoll();//--clear up pool;
         StopCoroutine("IESpawnerPosition");//close the coroutine of obj spawn
-        for (int i = 0; i < transform.GetChild(0).childCount; i++)//set active fasle of all gameobject
+        StopAllCoroutines();
+
+        if (transform.childCount > 1)
         {
-            Destroy(transform.GetChild(0).GetChild(i).gameObject);//destory all gameobjects 
+            for (int i = 0; i < transform.GetChild(0).childCount; i++)//set active fasle of all gameobject
+            {
+                Destroy(transform.GetChild(0).GetChild(i).gameObject);//destory all gameobjects 
+            }
+            for (int j = 0; j < transform.GetChild(2).childCount; j++)
+            {
+                Destroy(transform.GetChild(2).GetChild(j).gameObject);//destory all gameobjects which is vfx
+
+
+            }
         }
-        for (int j = 0; j < transform.GetChild(0).GetChild(2).childCount; j++)
-        {
-            Destroy(transform.GetChild(0).GetChild(j).gameObject);//destory all gameobjects which is vfx
-
-
-        }
-
 
     }
 
@@ -691,10 +769,15 @@ public class Monsterins : MonoBehaviour
         protectBossICE_assist = 1;
         protectBossFIRE = false;
         protectBossFIRE_assist = 1;
+        ifCheackCollison = -1;
         Netpool.Getinstance().Clearpoll();
         Debug.Log("clear up all mache of static+........................................................");
         StopCoroutine("IEICEBossReduceDamage");
         StopCoroutine("IEFIREBossReduceDamage");
+        Publisher.Getinstance().DisposeEvent();
+        iceHPcache = 0;
+        fireHPcache = 0;
+
 
 
     }
@@ -705,7 +788,7 @@ public class Monsterins : MonoBehaviour
         for (; ; )
         {
 
-            if (Rayboss.ICEbossHP < 3000)
+            if (Rayboss.ICEbossHP < 0.05f*iceHPcache&&Rayboss.ICEbossHP>0)
             {
                 protectBossICE = true;
                 protectBossICE_assist = 0.1f;
@@ -728,7 +811,7 @@ public class Monsterins : MonoBehaviour
         yield return new WaitForSeconds(5);//the boss start the recycle in 5 miniutes later
         for (; ; )
         {
-            if (Rayboss.FIREbossHP < 3000)
+            if (Rayboss.FIREbossHP < 0.05f*fireHPcache&&Rayboss.FIREbossHP>0)
             {
                 protectBossFIRE = true;
                 protectBossFIRE_assist = 0.1f;
@@ -881,7 +964,7 @@ public class Monsterins : MonoBehaviour
     /// module of change the vfx of obj
     /// </summary>
     IEnumerator IECaculateObjCount() 
-    { WaitForSeconds loop = new WaitForSeconds(1);
+    { WaitForSeconds loop = new WaitForSeconds(5);
           for (; ; )
         {
             objnum_assist = 0;
@@ -898,5 +981,21 @@ public class Monsterins : MonoBehaviour
             objnumcache= objnum_assist;
           
         }
+    }
+
+    void PublisherTest()
+    {
+        Publisher.Getinstance().TriggerEvent(EventArgs.Empty);
+        Debug.Log("the message has been published");
+    }
+    IEnumerator IEIfcheck()
+    {
+        WaitForSeconds loop = new WaitForSeconds(0.5f);
+        yield return loop;
+        ifcheck = true;
+
+    
+    
+    
     }
 }

@@ -174,12 +174,14 @@ public class Netpool : NoneMonoinstance<Netpool>
         //-----------从生成的物体身上传入ID值-------------------------------------------
         if (monsterStruct.ContainsKey(ID))//如果已包含该玩家
         { monsterStruct[ID].monsterIntegral += 5;
+            if(monsterType==MonsterType.PUNISHER)
             monsterStruct[ID].num++;
         }//召唤怪物加5积分,玩家召唤怪物增加一次num值
         else//如果未包含玩家，则为玩家创建新ID，且传入monsterStruct中。
         {
-            monsterStruct.Add(ID, new MonsterStruct { ID = ID,num =1}); //没有ID，则为字典增加ID对象,为num取值为1
-
+            monsterStruct.Add(ID, new MonsterStruct { ID = ID,num =0}); //没有ID，则为字典增加ID对象,为num取值为0
+            if (monsterType == MonsterType.PUNISHER)
+                monsterStruct[ID].num++;
         }
         gameObject0.TryGetComponent<Monstermove>(out Monstermove component);//取出该obj的ID值并为ID赋值，对应
         if (component.ifIntegral == true)//是否开启积分池开关

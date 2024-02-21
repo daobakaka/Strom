@@ -1,9 +1,12 @@
 using Games.Characters.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using static Subscriber;
 
 
 public class Rayboss : MonoBehaviour
@@ -35,12 +38,16 @@ public class Rayboss : MonoBehaviour
     public Vector3 damageCutOff_offset;
     private bool casticeskill;
     private bool castfireskill;
+    /// <summary>
+    /// the module of pubisher
+    /// </summary>
+    public EventHandler<MyCustomEventArgs> EMyEvent;
     void Start()
     {
         vfx = GameObject.FindWithTag("VFX");
         animator0 = GetComponent<Animator>();
         initBoss();
-        StartCoroutine("IEHealthupdate");//boss health update in  cycle
+       // StartCoroutine("IEHealthupdate");//boss health update in  cycle
         Debug.Log("it is me !!!!!!!!!!!!!!!!!!!");
        // initBoss();
     }
@@ -49,10 +56,13 @@ public class Rayboss : MonoBehaviour
         casticeskill = true;
         castfireskill = true;
         //---
-        StartCoroutine("IEBossSkillForDamageReduce");
+
         //--
         StartCoroutine("IEBssSkill_Ef_Recover");
         //--
+        StartCoroutine("IEHealthupdate");//boss health update in  cycle
+        //
+        StartCoroutine("IEBossSkillForDamageReduce");
     }
     private void OnDisable()
     {
@@ -61,10 +71,11 @@ public class Rayboss : MonoBehaviour
         StopCoroutine("IEBssSkill_Ef_Recover");
         //--
         StopCoroutine("IEHealthupdate");//boss health update in  cycle
+        StopAllCoroutines();
     }
     public void initBoss()//******wjy code*****
     {
-        Debug.LogError("it is me !!!!!!!!!!!!!!!!!!!");
+       // Debug.LogError("it is me !!!!!!!!!!!!!!!!!!!");
         Monsterins.instance.ifbooslive = true;
         baseHp = PlayerPrefs.GetInt(HttpRquest.BaseHpKey, HttpRquest.instance.globalBloodList[0]);
         ICEbossHP = baseHp;
@@ -100,7 +111,8 @@ public class Rayboss : MonoBehaviour
         {
            
             animator0.SetTrigger("Attack");
-           // Debug.Log("fire" + "-----------------------------------------------------------------------------------------");
+            // Debug.Log("fire" + "-----------------------------------------------------------------------------------------");
+          //  TriggerEvent("kill the boss");
         }
 
         if (other.tag.Equals(enemy))
@@ -170,7 +182,7 @@ public class Rayboss : MonoBehaviour
     /// <returns></returns>
     IEnumerator IEHealthupdate()
     {
-        WaitForSeconds loop = new WaitForSeconds(0.5f);  
+        WaitForSeconds loop = new WaitForSeconds(Time.deltaTime);  
         
         for (; ICEbossHP > 0;)
         {
@@ -189,8 +201,9 @@ public class Rayboss : MonoBehaviour
     }
     IEnumerator IEBossSkillForDamageReduce()//the IECorotine that to check the skill of last minute;
     {
+        yield return new WaitForSeconds(3);
         WaitForSeconds loop = new WaitForSeconds(0.5f);
-
+        Debug.Log("start protect time time time time  monitor!!!!!!!!!!!!!!!!!!!!");
         for (; ICEbossHP > 0;)
         { yield return loop;
             if (Monsterins.protectBossICE && isICEboss && casticeskill)
@@ -211,21 +224,25 @@ public class Rayboss : MonoBehaviour
     }
     IEnumerator IEBssSkill_Ef_Recover()
     {
-        WaitForSeconds loop = new WaitForSeconds(4f);
-        for (; ICEbossHP > 0;)
+        WaitForSeconds loop = new WaitForSeconds(5f);
+      //  Debug.Log("start protect monitor!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+ Monsterins.protectBossICE+ Monsterins.protectBossFIRE+ castfireskill);
+        for (; ICEbossHP > 0;)////
         {
             yield return loop;
             casticeskill = true;
             castfireskill = true;
-
+  //  Debug.Log("start protect monitor!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + Monsterins.protectBossICE + Monsterins.protectBossFIRE + castfireskill+ICEbossHP+"  "+FIREbossHP);
             if (FIREbossHP < 0)
                 break;
         }
-
-
-
-
-
+    }
+    protected virtual void OnMyEvent(string messsage)
+    {
+        EMyEvent?.Invoke(this, new MyCustomEventArgs(messsage));
+    }
+    public void TriggerEvent(string message)
+    {
+        OnMyEvent(message);
 
     }
 }
