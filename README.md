@@ -1,2 +1,2 @@
 # Strom
- 
+"This package contains only the scripts of the game, which is played by players on the Chinese version of TikTok online. You can participate in the game only when an anchor is hosting it. You can send gifts to the anchor, which may trigger a refresh of some actors in the scene after you choose your faction in the game. This package is a sample of an ECS (Entity Component System) combined with a traditional system. If you want the complete package, please send an email to a373823424@qq.com."
