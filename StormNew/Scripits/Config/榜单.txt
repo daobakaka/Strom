@@ -1,0 +1,12 @@
+            case 1:
+                tipText.text = "距离日榜排名刷新剩余：";
+                tipText2.text = "日榜每日24点清空：";
+                break;
+            case 0:
+                tipText.text = "距离周榜排名刷新剩余：";
+                tipText2.text = "周榜每周日24点清空：";
+                break;
+            case 2:
+                tipText.text = "距离月榜排名刷新剩余：";
+                tipText2.text = "月榜每月最后一日24点清空：";
+                break;
